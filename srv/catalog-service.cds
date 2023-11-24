@@ -1,5 +1,18 @@
 using {com.logali as logali} from '../db/schema';
 
 service CatalogService {
-    entity Products as projection on logali.Products;
+    entity Products         as projection on logali.Products;
+    entity Suppliers        as projection on logali.Suppliers;
+    entity UnitOfMeasures   as projection on logali.UnitOfMeasures;
+    entity Currency_Id      as projection on logali.Currencies;
+    entity DimensionUnit_Id as projection on logali.DimensionUnits;
+    entity Category_Id      as projection on logali.Categories;
+    entity SalesData        as projection on logali.SalesData;
+    entity Reviews          as projection on logali.ProductReview;
+    entity UnitOfMeasure_Id as projection on logali.UnitOfMeasures;
+    entity Months           as projection on logali.Months;
+    entity Order            as projection on logali.Orders;
+    entity OrderItem        as projection on logali.OrderItems;
+
+//entity Car       as projection on logali.Car;
 }
