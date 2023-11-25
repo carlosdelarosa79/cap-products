@@ -1,5 +1,11 @@
 namespace com.logali;
 
+using {
+    cuid,
+    managed
+} from '@sap/cds/common';
+
+
 type Address {
     Street     : String;
     City       : String;
@@ -24,106 +30,95 @@ type Address {
 //virtual discount_2 : Decimal;
 //}
 
-entity Products {
-    key ID               : UUID;
-        Name             : String not null;
-        Description      : String;
-        ImageUrl         : String;
-        ReleaseDate      : DateTime default $now;
-        DiscontinuedDate : DateTime;
-        Price            : Decimal(16, 2);
-        Height           : Decimal(16, 2);
-        Width            : Decimal(16, 2);
-        Depth            : Decimal(16, 2);
-        Quantity         : Decimal(16, 2);
-        UnitOfMeasure_Id : String;
-        Currency_Id      : String;
-        Category_Id      : String;
-        Supplier_Id      : String;
-        DimensionUnit_Id : String;
-        SalesData        : Association to many SalesData;
-        Reviews          : Association to many ProductReview;
+entity Products : cuid, managed {
+    Name             : localized String not null;
+    Description      : localized String;
+    ImageUrl         : String;
+    ReleaseDate      : DateTime default $now;
+    DiscontinuedDate : DateTime;
+    Price            : Decimal(16, 2);
+    Height           : Decimal(16, 2);
+    Width            : Decimal(16, 2);
+    Depth            : Decimal(16, 2);
+    Quantity         : Decimal(16, 2);
+    UnitOfMeasure_Id : String;
+    Currency_Id      : String;
+    Category_Id      : String;
+    Supplier_Id      : String;
+    DimensionUnit_Id : String;
+    SalesData        : Association to many SalesData;
+    Reviews          : Association to many ProductReview;
 
 };
 
 // como vemos en item  tenmos una COMPOSITION  esto es para que si el padre no existe todo se borra es la diferencia entre la COMPOSITION Y ASSOCIATION
-entity Orders {
-    key ID       : UUID;
-        Date     : Date;
-        Customer : String;
-        Item     : Composition of many OrderItems
-                       on Item.order = $self
+entity Orders : cuid {
+    Date     : Date;
+    Customer : String;
+    Item     : Composition of many OrderItems
+                   on Item.order = $self
 };
 
-entity OrderItems {
-    key ID       : UUID;
-        order    : Association to Orders;
-        Product  : Association to Products;
-        Quantity : Integer;
+entity OrderItems : cuid {
+    order    : Association to Orders;
+    Product  : Association to Products;
+    Quantity : Integer;
 };
 
-entity Suppliers {
-    key ID      : UUID;
-        Name    : type of Products : Name;
-        Address : Address;
-        Email   : String;
-        Phone   : String;
-        Fax     : String;
-        Product : Association to many Products
-                      on Product.Supplier_Id;
+entity Suppliers : cuid, managed {
+    Name    : type of Products : Name;
+    Address : Address;
+    Email   : String;
+    Phone   : String;
+    Fax     : String;
+    Product : Association to many Products
+                  on Product.Supplier_Id;
 
 };
 
-entity Categories {
-    key ID   : String(1);
-        Name : String;
+entity Categories : cuid {
+    Name : localized String;
 };
 
-entity StockAvailability {
-    key ID          : Integer;
-        Description : String;
+entity StockAvailability : cuid {
+    Description : localized String;
+    Product     : Association to Products;
 };
 
-entity Currencies {
-    key ID          : String(3);
-        Description : String;
+entity Currencies : cuid {
+    Description : localized String;
 };
 
-entity UnitOfMeasures {
-    key ID          : String(3);
-        Description : String;
+entity UnitOfMeasures : cuid {
+    Description : localized String;
 };
 
-entity DimensionUnits {
-    key ID          : String(3);
-        Description : String;
+entity DimensionUnits : cuid {
+    Description : localized String;
 };
 
-entity Months {
-    key ID               : String(3);
-        Description      : String;
-        ShortDescription : String(3);
+entity Months : cuid {
+    Description      : localized String;
+    ShortDescription : localized String(3);
 };
 
-entity ProductReview {
-    key ID         : UUID;
-        createdAt  : DateTime;
-        createdBy  : String;
-        modifiedAt : String;
-        modifiedby : String;
-        Name       : String;
-        Rating     : Integer;
-        Comment    : String;
-        Product_ID : UUID;
+entity ProductReview : cuid {
+    createdAt  : DateTime;
+    createdBy  : String;
+    modifiedAt : String;
+    modifiedby : String;
+    Name       : String;
+    Rating     : Integer;
+    Comment    : String;
+    Product_ID : UUID;
 };
 
-entity SalesData {
-    key ID               : UUID;
-        DeliveryDate     : DateTime;
-        Revenue          : Decimal(16, 2);
-        Product_Id       : UUID;
-        Currency_Id      : String;
-        DeliveryMonth_Id : Integer;
+entity SalesData : cuid, managed {
+    DeliveryDate     : DateTime;
+    Revenue          : Decimal(16, 2);
+    Product_Id       : UUID;
+    Currency_Id      : String;
+    DeliveryMonth_Id : Integer;
 
 };
 
@@ -190,20 +185,17 @@ extend Products with {
 };
 
 // nos sirve para poder hacer la relacion MANY TO MANY ya q toca hacerlo asi como en este codigo no se puede directo
-entity Course {
-    key ID      : UUID;
-        Student : Association to many StudentCourse
-                      on Student.Course = $self;
+entity Course : cuid {
+    Student : Association to many StudentCourse
+                  on Student.Course = $self;
 }
 
-entity Student {
-    key ID     : UUID;
-        Course : Association to many StudentCourse
-                     on Course.Student = $self;
+entity Student : cuid {
+    Course : Association to many StudentCourse
+                 on Course.Student = $self;
 }
 
-entity StudentCourse {
-    key ID      : UUID;
-        Student : Association to Student;
-        Course  : Association to Course;
+entity StudentCourse : cuid {
+    Student : Association to Student;
+    Course  : Association to Course;
 }
