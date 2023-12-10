@@ -16,14 +16,14 @@ using {com.training as training} from '../db/training';
 //     entity OrderItem        as projection on logali.sales.OrderItems;
 // }
 
-/* tener en cuenta que para que se vea este cambio debe cambiar el nombre a los archivos que estan en la carpeta data 
+/* tener en cuenta que para que se vea este cambio debe cambiar el nombre a los archivos que estan en la carpeta data
 con esta ya no exponemos todo el servicio odata
 si no solo lo que nosotros queramos exponer
 cuando agregamos el @mandatory es para que ese campo se debe llenar obligatoriamente  */
 
 define service CatalogService {
     entity Products          as
-        select from logali.materials.Products {
+        select from logali.reports.Products {
             ID,
             Name             as PoductName      @mandatory,
             Description                         @mandatory,
@@ -34,14 +34,23 @@ define service CatalogService {
             Height,
             Width,
             Depth,
-            Quantity @mandatory @assert.range,
+            Quantity                            @(
+                mandatory,
+                assert.range: [
+                    0.00,
+                    20.00
+                ]
+            ),
             UnitOfMeasure_Id as ToUnitOfMeasure @mandatory,
             Currency_Id      as ToCurrency      @mandatory,
             Category_Id      as ToCategory      @mandatory,
             DimensionUnit_Id as ToDimensionUnit_Id,
             SalesData,
             Supplier_Id,
-            Reviews
+            Reviews,
+            Rating,
+            StockAvailability,
+            ToStockAvailibity
         };
 
     @readonly
@@ -97,17 +106,51 @@ define service CatalogService {
             ID          as Code,
             Description as Text
         };
+
     @readonly
     entity VH_UnitOfMeasure  as
         select from logali.materials.UnitOfMeasures {
             ID          as Code,
             Description as Text
         };
+
     @readonly
     entity VH_DimensionUnits as
         select from logali.materials.DimensionUnits {
             ID          as Code,
             Description as Text
         };
+
+}
+
+define service MyService {
+
+    entity SuppliersProduct  as
+        select from logali.materials.Products[Name = 'Bread']{
+            *,
+            Name,
+            Description,
+            Products.Supplier_Id
+        };
+
+    entity SuppliersToSales  as select ProProducts.Name from logali.materials.ProProducts;
+    entity EntityInfix       as select Supplier_Id from logali.materials.Products
+}
+
+define service Reports {
+    entity AverageRating     as projection on logali.reports.AverageRating;
+
+    entity EntityCasting as 
+    select
+        cast (Price as Integer) as Price,
+        Price as Price2 : Integer
+    from logali.materials.Products;
+
+entity EntityExists as 
+    select from logali.reports.Products {
+        ID,
+        Name as ProductName @mandatory
+    } 
+
 
 }

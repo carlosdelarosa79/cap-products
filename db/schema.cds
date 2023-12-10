@@ -70,20 +70,22 @@ context materials {
         Rating     : Integer;
         Comment    : String;
         Product_ID : UUID;
-        //Product    : Association to materials.Products;
+    //Product    : Association to materials.Products;
     };
 
     //para crear vistas de tipo proyeccion 3 formas diferentes , y aca tenemos restricciones por que no soportan los join
     entity ProProducts  as projection on Products;
 
-    entity ProProducts2 as projection on Products {
-        *
-    };
+    entity ProProducts2 as
+        projection on Products {
+            *
+        };
 
-    entity ProProducts3 as projection on Products {
-        ReleaseDate,
-        Name
-    };
+    entity ProProducts3 as
+        projection on Products {
+            ReleaseDate,
+            Name
+        };
 
 
     // ENTIDADES AMPLIACION
@@ -164,8 +166,46 @@ context sales {
         Product_Id       : UUID;
         Currency_Id      : String;
         DeliveryMonth_Id : Association to sales.Months;
-        //Product          : Association to materials.Products;
+    //Product          : Association to materials.Products;
 
     };
+
+}
+
+context reports {
+    entity AverageRating as
+        select from logali.materials.ProductReview {
+            Product_ID  as ProductId,
+            avg(Rating) as AverageRating : Decimal(16, 2)
+        }
+        group by
+            Product_ID;
+
+
+    entity Products      as
+        select from logali.materials.Products
+        mixin {
+            ToStockAvailibity : Association to logali.materials.StockAvailability
+                                    on ToStockAvailibity.ID = $projection.StockAvailability;
+            ToAverageRating   : Association to AverageRating
+                                    on ToAverageRating.ProductId = ID;
+        }
+        into {
+            *,
+            ToAverageRating.AverageRating as Rating,
+            case
+                when
+                    Quantity >= 8
+                then
+                    3
+                when
+                    Quantity > 0
+                then
+                    2
+                else
+                    1
+            end                           as StockAvailability : Integer,
+            ToStockAvailibity
+        }
 
 }
