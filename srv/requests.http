@@ -1,15 +1,15 @@
-# aca podemos hacer directo una peticion http con el cursor lo llevamos donde dice SEND REQUEST y el nos da una response 
+# aca podemos hacer directo una peticion http con el cursor lo llevamos donde dice SEND REQUEST  y ahi podemos ver la response en una ventana 
 
 
 ### Get Orders
 
-GET http://localhost:4004/odata/v4/manage-orders/GetOrders 
+GET http://localhost:4004/odata/v4/manage-orders/Orders 
 
 ### Get Orders  aca estamos filtrando por email 
-GET http://localhost:4004/odata/v4/manage-orders/GetOrders('client1@client1.com') 
+GET http://localhost:4004/odata/v4/manage-orders/Orders('client1@client1.com') 
 
 ### Create Order
-POST http://localhost:4004/odata/v4/manage-orders/CreateOrder HTTP/1.1
+POST http://localhost:4004/odata/v4/manage-orders/Orders HTTP/1.1
 Content-Type: application/json
 
 {
@@ -22,3 +22,29 @@ Content-Type: application/json
     "Country_code": "ES",
     "Status": null
 }
+
+
+### Update Order
+PUT http://localhost:4004/odata/v4/manage-orders/Orders('client1@client1.com') HTTP/1.1
+Content-Type: application/json
+
+{
+    "FirstName": "carlos update",
+    "LastName": "reyes update"
+}
+
+
+### Delete Order
+DELETE  http://localhost:4004/odata/v4/manage-orders/Orders('client1@client1.com') HTTP/1.1
+
+### Get Customer Rate - Function    TENGO UN ERROR !!!!!! SOLUCIONAR VIDEO 13.1  MINUTO 22:13
+GET  http://localhost:4004/odata/v4/manage-orders/getClientTaxRate?ClientEmail='client1@client1.com'
+
+### cancel Order ACTION     
+POST http://localhost:4004/odata/v4/manage-orders/cancelOrder
+Content-Type: application/json
+
+{
+    "clientEmail" : "client2@client2.com"
+}
+
