@@ -45,6 +45,15 @@ POST http://localhost:4004/odata/v4/manage-orders/cancelOrder
 Content-Type: application/json
 
 {
-    "clientEmail" : "client2@client2.com"
+    "clientEmail" : "client1@client1.com"
 }
+
+
+### GET Incidents
+GET http://localhost:4004/odata/v4/sapbackend-exit/Incidents 
+
+
+
+
+
 
