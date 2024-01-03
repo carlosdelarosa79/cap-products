@@ -7,14 +7,15 @@ define service SAPBackendExit {
         table,
         skip: false
     }
-    @cds.autoexpose
-    // entity Incidents as select from external.IncidentsSet;
-
-
-    //con esta forma de llamar a la entity Incidents me sale el error 502
-    entity Incidents as projection on external.IncidentsSet
+      @cds.autoexpose
+     entity Incidents as select from external.IncidentsSet;
     
 }
 
+//aca exponemos los servicios CAP pero como protocolo REST
+ @protocol: 'rest'
+ service Restservice {
+     entity Incidents as projection on SAPBackendExit.Incidents;
+}
 
 
